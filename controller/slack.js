@@ -5,53 +5,16 @@ var slackAdapter = require("../adapters/slack");
 
 slackController.urlFromSlack = function (req, res) {
 
-  data = {};
+  slackAdapter.createPageByCommand(req.body)
+    .then((page) => {
+      if (!page) return res.status(400).json({message: "URLを貼れ！"});
 
-  expression = /(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/gi
-  //expression = /[-a-zA-Z0-9@:%._\+~#=]{2,256}(\.[a-z]{2,6})?\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/gi
-  var regex = new RegExp(expression);
-
-  data.message = "オーケー";
-
-  var info = {};
-
-  info.userName = req.body.user_name;
-  info.url = req.body.text;
-  info.from = "Slack";
-  info.title = "Tech Crunch 2015";
-
-  splitt = info.url.split(/([^\/]+)(\/.*)*/);
-  console.log("SGHSGHS")
-  console.log(splitt)
-  splittt = splitt[1].split(/(.+:\/\/)?([^\/]+)(\/.*)*/);
-
-  var host = splittt[0];
-  var path = splittt[1];
-
-  var urlOpts = {host: host, path: path};
-  var re = /(<\s*title[^>]*>(.+?)<\s*\/\s*title)>/gi;
-
-
-  if (info.url.match(regex)){
-    const page = new Page({
-      userName: info.userName,
-      from: info.from,
-      datetime:  moment().format("X"),
-      url: info.url,
-      title: info.title
+      res.status(200).json(page);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({error: err});
     });
-
-    page.save()
-      .then(function () {
-        return res.status(200).json(data);
-      })
-      .catch(function (err) {
-        console.log(err)
-        return res.status(500).json({error: err});
-      });
-  } else {
-    return res.status(400).json({message: "URLを貼れ！"});
-  }
 };
 
 slackController.requestOAuth = function (req, res) {
