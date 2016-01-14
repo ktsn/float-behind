@@ -1,3 +1,5 @@
+require('dotenv').load();
+
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -5,7 +7,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
 var resJsonWithStatusCode = require("./middlewares/resJsonWithStatusCode");
 var suppressStatusCode = require("./middlewares/suppressStatusCode");
 
@@ -81,6 +82,10 @@ app.post("/postUrl", slackController.urlFromSlack);
 app.get("/getList", userController.getList);
 app.get("/getListByTime", userController.getListByTime);
 app.get("/getListById", userController.getListById);
+
+// Authentication via Slack
+app.get("/oauth/slack", slackController.requestOAuth);
+app.get("/oauth/slack/callback", slackController.callbackOAuth);
 
 
 module.exports = app;
