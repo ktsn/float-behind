@@ -75,7 +75,7 @@ exports.createPageByCommand = function (commandParam) {
 
   // create a group having the posted page if not exists
   const groupPromise = Group.where("slack_team_id", "=", param.teamId)
-    .fetch()
+    .fetch({ withRelated: "users" })
     .then((group) => {
       if (group) return Promise.resolve(group);
 
@@ -102,6 +102,9 @@ exports.createPageByCommand = function (commandParam) {
         title: title
       });
 
-      return page.save();
+      return page.save()
+        .tap((page) => {
+          return page.floatFor(group.related("users"));
+        });
     });
 };
