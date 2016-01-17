@@ -24,10 +24,11 @@ slackController.requestOAuth = function (req, res) {
 slackController.callbackOAuth = function (req, res) {
   slackAdapter
     .fetchTokenByParam(req.query)
-    .then((token) => {
-      // TODO: store token
-      console.log(token);
-      res.send("OK");
+    .then((token) => slackAdapter.saveSlackUser(token))
+    .then((user) => {
+      // TODO: save the user data in session
+      console.log(user.toJSON());
+      res.redirect("/");
     });
 };
 

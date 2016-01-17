@@ -16,7 +16,7 @@ const TOKEN_ISSUE_ENDPOINT = "https://slack.com/api/oauth.access";
 const OAUTH_REDIRECT_URL = process.env.SERVICE_HOST + "/oauth/slack/callback";
 const OAUTH_CLIENT_ID = process.env.SLACK_CLIENT_ID;
 const OAUTH_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET;
-const OAUTH_SCOPE = "team:read,users:read";
+const OAUTH_SCOPE = "team:read,users:read,identify";
 
 exports.getOAuthUrl = function () {
   const paramStr = paramsToString({
@@ -42,6 +42,42 @@ exports.fetchTokenByParam = function (redirectParam) {
     .then((response) => {
       return response.data["access_token"];
     });
+};
+
+exports.saveSlackUser = function(token) {
+  return axios
+    .get("https://slack.com/api/auth.test", {
+      params: { token: token }
+    })
+    .then((response) => {
+      const data = response.data;
+      const slackUserId = data["user_id"];
+      const slackTeamId = data["team_id"];
+
+      return Promise.all([
+        User.createFromSlack(slackUserId, slackTeamId, token),
+
+        axios
+          .get("https://slack.com/api/users.info", {
+            params: {
+              token: token,
+              user: slackUserId
+            }
+          })
+          .then((response) => response.data.user)
+      ]);
+    })
+    .then((values) => {
+      const user = values[0];
+      const slackUser = values[1];
+
+      return user.set({
+        name: slackUser.name,
+        email: slackUser.profile.email,
+        iconUrl: slackUser.profile["image_48"]
+      }).save();
+    })
+    .catch((err) => console.error(err));
 };
 
 exports.createPageByCommand = function (commandParam) {

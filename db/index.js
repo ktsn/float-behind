@@ -6,6 +6,8 @@ const bookshelf = require('bookshelf')(knex);
 
 bookshelf.plugin('bookshelf-camelcase');
 
+require("./base")(bookshelf);
+
 exports.bookshelf = bookshelf;
 exports.models = {};
 
