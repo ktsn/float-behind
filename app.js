@@ -6,6 +6,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
 var resJsonWithStatusCode = require("./middlewares/resJsonWithStatusCode");
 var suppressStatusCode = require("./middlewares/suppressStatusCode");
@@ -22,6 +23,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+// TODO: change session store instead of memory store
+// TODO: set secret
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}))
+
 app.use(express.static(path.join(__dirname, 'web/dist')));
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
