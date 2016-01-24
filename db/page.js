@@ -1,5 +1,7 @@
 "use strict";
 
+const _ = require("lodash");
+const Promise = require("bluebird");
 const db = require("./index");
 
 const Page = db.bookshelf.Model.extend({
@@ -12,6 +14,14 @@ const Page = db.bookshelf.Model.extend({
   },
   group: function () {
     return this.belongsTo(db.models.Group);
+  },
+
+  floatFor: function(users) {
+    const promises = _(users.toArray())
+      .map((user) => user.related("floatPages").attach(this))
+      .value();
+
+    return Promise.all(promises);
   }
 });
 

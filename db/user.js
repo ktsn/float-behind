@@ -12,6 +12,30 @@ const User = db.bookshelf.Model.extend({
   },
   groups: function() {
     return this.belongsToMany(db.models.Group);
+  },
+}, {
+  createFromSlack: function(slackUserId, slackTeamId, slackAccessToken) {
+    return this.where("slack_user_id", slackUserId)
+      .fetch({ withRelated: "groups" })
+      .then((user) => {
+        if (user) return user;
+
+        return User.forge({
+          slackUserId, slackAccessToken
+        }).save();
+      })
+      .tap((user) => {
+        const groups = user.related("groups");
+        let group = groups.findWhere({ slackTeamId });
+
+        if (group) return;
+
+        return db.models.Group.forge({ slackTeamId })
+          .findOrSave()
+          .then((group) => {
+            return groups.attach(group);
+          });
+      });
   }
 });
 

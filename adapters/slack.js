@@ -6,47 +6,48 @@ const _ = require("lodash");
 const Promise = require("bluebird");
 const moment = require("moment");
 const textUtil = require("../utils/text");
+const SlackApi = require("../utils/slack-api");
 
 const Page = require("../db/page");
 const User = require("../db/user");
 const Group = require("../db/group");
 
-const OAUTH_ENDPOINT = "https://slack.com/oauth/authorize";
-const TOKEN_ISSUE_ENDPOINT = "https://slack.com/api/oauth.access";
-const OAUTH_REDIRECT_URL = process.env.SERVICE_HOST + "/oauth/slack/callback";
-const OAUTH_CLIENT_ID = process.env.SLACK_CLIENT_ID;
-const OAUTH_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET;
-const OAUTH_SCOPE = "team:read,users:read";
-
 exports.getOAuthUrl = function () {
-  const paramStr = paramsToString({
-    clientId: OAUTH_CLIENT_ID,
-    scope: OAUTH_SCOPE,
-    redirectUri: OAUTH_REDIRECT_URL
-  });
-
-  return `${OAUTH_ENDPOINT}?${paramStr}`;
+  return SlackApi.oauthUrl;
 };
 
 exports.fetchTokenByParam = function (redirectParam) {
-  const paramStr = paramsToString({
-    clientId: OAUTH_CLIENT_ID,
-    clientSecret: OAUTH_CLIENT_SECRET,
-    code: redirectParam.code,
-    redirectUri: OAUTH_REDIRECT_URL
-  });
-  const url = `${TOKEN_ISSUE_ENDPOINT}?${paramStr}`;
+  const api = new SlackApi();
+  return api.oauthAccess(redirectParam.code)
+    .then((data) => data.accessToken);
+};
 
-  return axios
-    .get(url)
-    .then((response) => {
-      return response.data["access_token"];
-    });
+exports.saveSlackUser = function(token) {
+  const api = new SlackApi(token);
+
+  return api.authTest()
+    .then((data) => {
+      return Promise.all([
+        User.createFromSlack(data.userId, data.teamId, token),
+        api.usersInfo(data.userId)
+      ]);
+    })
+    .then((values) => {
+      const user = values[0];
+      const slackUser = values[1].user;
+
+      return user.set({
+        name: slackUser.name,
+        email: slackUser.profile.email,
+        iconUrl: slackUser.profile.image48
+      }).save();
+    })
+    .catch((err) => console.error(err));
 };
 
 exports.createPageByCommand = function (commandParam) {
 
-  const param = snakeKeyToCamel(commandParam);
+  const param = SlackApi.snakeToCamel(commandParam);
   const pageUrl = _.first(getUrls(param.text));
 
   // There is no url in text
@@ -74,7 +75,7 @@ exports.createPageByCommand = function (commandParam) {
 
   // create a group having the posted page if not exists
   const groupPromise = Group.where("slack_team_id", "=", param.teamId)
-    .fetch()
+    .fetch({ withRelated: "users" })
     .then((group) => {
       if (group) return Promise.resolve(group);
 
@@ -101,37 +102,9 @@ exports.createPageByCommand = function (commandParam) {
         title: title
       });
 
-      return page.save();
+      return page.save()
+        .tap((page) => {
+          return page.floatFor(group.related("users"));
+        });
     });
 };
-
-function paramsToString(params) {
-  const to = {};
-
-  // translate param keys to snake case and escape param values
-  _(params)
-    .keys()
-    .forEach((key) => {
-      to[_.snakeCase(key)] = encodeURIComponent(params[key]);
-    })
-    .commit();
-
-  return _(to)
-    .pairs()
-    .map((p) => `${p[0]}=${p[1]}`)
-    .join("&");
-}
-
-function snakeKeyToCamel(obj) {
-  const to = {};
-
-  // translate object keys to camel case
-  _(obj)
-    .keys()
-    .forEach((key) => {
-      to[_.camelCase(key)] = obj[key];
-    })
-    .commit();
-
-  return to;
-}
