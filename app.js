@@ -38,6 +38,7 @@ app.use(resJsonWithStatusCode);
 //controllers
 var slackController = require('./controller/slack');
 var userController = require('./controller/user');
+var pageController = require('./controller/page');
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
@@ -95,6 +96,9 @@ app.get("/getListById", userController.getListById);
 // Authentication via Slack
 app.get("/oauth/slack", slackController.requestOAuth);
 app.get("/oauth/slack/callback", slackController.callbackOAuth);
+
+// pages
+app.get("/pages", userController.shouldLogin, pageController.getPages);
 
 
 module.exports = app;
