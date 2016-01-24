@@ -4,6 +4,8 @@ const db = require("./index");
 
 const User = db.bookshelf.Model.extend({
   tableName: "users",
+  hidden: ["slackAccessToken", "slackUserId"],
+
   pages: function () {
     return this.hasMany(db.models.Page);
   },
@@ -12,7 +14,7 @@ const User = db.bookshelf.Model.extend({
   },
   groups: function() {
     return this.belongsToMany(db.models.Group);
-  },
+  }
 }, {
   createFromSlack: function(slackUserId, slackTeamId, slackAccessToken) {
     return this.where("slack_user_id", slackUserId)

@@ -6,8 +6,10 @@ const db = require("./index");
 
 const Page = db.bookshelf.Model.extend({
   tableName: "pages",
+  hidden: ["group_id", "user_id"],
+
   user: function () {
-    return this.belongsTo(User);
+    return this.belongsTo(db.models.User);
   },
   floatingUsers: function () {
     return this.belongsToMany(db.models.User, "float_pages");

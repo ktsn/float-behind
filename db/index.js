@@ -4,7 +4,7 @@ const env = process.env.NODE_ENV || 'development';
 const knex = require('knex')(knexConfig[env]);
 const bookshelf = require('bookshelf')(knex);
 
-bookshelf.plugin('bookshelf-camelcase');
+bookshelf.plugin(['bookshelf-camelcase', 'visibility']);
 
 require("./base")(bookshelf);
 
