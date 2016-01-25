@@ -1,3 +1,6 @@
+"use strict";
+
+var path = require("path");
 var Page = require("../db/page");
 var moment = require("moment");
 var userController = {};
@@ -131,6 +134,11 @@ userController.shouldLogin = function (req, res, next) {
   } else {
     next();
   }
+};
+
+userController.getDefaultImage = function (req, res) {
+  const format = req.param.format || 'png';
+  res.sendFile(path.resolve(__dirname, `../assets/img-user_default.${format}`));
 };
 
 module.exports = userController;

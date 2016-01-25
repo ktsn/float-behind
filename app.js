@@ -100,5 +100,8 @@ app.get("/oauth/slack/callback", slackController.callbackOAuth);
 // pages
 app.get("/pages", userController.shouldLogin, pageController.getPages);
 
+// users
+app.get("/users/default_image(.:format)", userController.getDefaultImage);
+
 
 module.exports = app;
