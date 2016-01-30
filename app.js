@@ -6,6 +6,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 
 var resJsonWithStatusCode = require("./middlewares/resJsonWithStatusCode");
 var suppressStatusCode = require("./middlewares/suppressStatusCode");
@@ -22,6 +24,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+// TODO: set secret
+app.use(session({
+  store: new RedisStore(),
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}))
+
 app.use(express.static(path.join(__dirname, 'web/dist')));
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
@@ -29,6 +39,7 @@ app.use(resJsonWithStatusCode);
 //controllers
 var slackController = require('./controller/slack');
 var userController = require('./controller/user');
+var pageController = require('./controller/page');
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
@@ -86,6 +97,12 @@ app.get("/getListById", userController.getListById);
 // Authentication via Slack
 app.get("/oauth/slack", slackController.requestOAuth);
 app.get("/oauth/slack/callback", slackController.callbackOAuth);
+
+// pages
+app.get("/pages", userController.shouldLogin, pageController.getPages);
+
+// users
+app.get("/users/default_image(.:format)", userController.getDefaultImage);
 
 
 module.exports = app;

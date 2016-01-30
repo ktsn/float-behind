@@ -18,6 +18,9 @@ slackController.urlFromSlack = function (req, res) {
 };
 
 slackController.requestOAuth = function (req, res) {
+  if (req.session.user) {
+    return res.redirect("/");
+  }
   res.redirect(slackAdapter.getOAuthUrl());
 };
 
@@ -26,8 +29,7 @@ slackController.callbackOAuth = function (req, res) {
     .fetchTokenByParam(req.query)
     .then((token) => slackAdapter.saveSlackUser(token))
     .then((user) => {
-      // TODO: save the user data in session
-      console.log(user.toJSON());
+      req.session.userId = user.get("id");
       res.redirect("/");
     });
 };

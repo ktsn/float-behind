@@ -1,3 +1,6 @@
+"use strict";
+
+var path = require("path");
 var Page = require("../db/page");
 var moment = require("moment");
 var userController = {};
@@ -122,6 +125,20 @@ userController.deleteList = function (req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, GET, DELETE, PUT");
   res.setHeader("Access-Control-Allow-Headers", "X-Requested-With, Content-Type");
 
+};
+
+userController.shouldLogin = function (req, res, next) {
+  if (!req.session.userId) {
+    res.status(401)
+      .json({ message: "Login is required" });
+  } else {
+    next();
+  }
+};
+
+userController.getDefaultImage = function (req, res) {
+  const format = req.param.format || 'png';
+  res.sendFile(path.resolve(__dirname, `../assets/img-user_default.${format}`));
 };
 
 module.exports = userController;
