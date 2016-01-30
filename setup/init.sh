@@ -3,14 +3,8 @@
 cd /vagrant/setup
 
 yum update -y
-
-# install Node.js
-curl -L git.io/nodebrew | perl - setup
-echo "export PATH=$HOME/.nodebrew/current/bin:$PATH" >> ~/.bash_profile
-source ~/.bash_profile
-nodebrew install-binary v5.3.0
-nodebrew use v5.3.0
-nodebrew alias default v5.3.0
+rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 
 # remove default MySQL
 yum remove -y mysql
@@ -28,3 +22,17 @@ systemctl start mariadb.service
 
 # create floatbehind user, database and tables
 mysql -u root < init.sql
+
+# install redis
+yum --enablerepo=remi install -y redis
+service redis start
+chkconfig redis on
+
+# install Node.js
+echo "export NODEBREW_ROOT=/opt/nodebrew" > /etc/profile.d/nodebrew.sh
+echo "export PATH=/opt/nodebrew/current/bin:$PATH" >> /etc/profile.d/nodebrew.sh
+source /etc/profile.d/nodebrew.sh
+curl -L git.io/nodebrew | perl - setup
+nodebrew install-binary v5.3.0
+nodebrew use v5.3.0
+nodebrew alias default v5.3.0
