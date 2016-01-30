@@ -7,6 +7,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
 
 var resJsonWithStatusCode = require("./middlewares/resJsonWithStatusCode");
 var suppressStatusCode = require("./middlewares/suppressStatusCode");
@@ -23,9 +24,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-// TODO: change session store instead of memory store
 // TODO: set secret
 app.use(session({
+  store: new RedisStore(),
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: true
