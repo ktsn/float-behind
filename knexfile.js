@@ -1,4 +1,4 @@
-// Update with your config settings.
+require('dotenv').load();
 
 module.exports = {
 
@@ -37,9 +37,9 @@ module.exports = {
   production: {
     client: 'mysql',
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      database: 'floatbehind_db',
+      user:     'floatbehind',
+      password: process.env.DB_PASSWORD
     },
     pool: {
       min: 2,
