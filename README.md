@@ -20,6 +20,13 @@ $ vagrant plugin install vagrant-hostsupdater vagrant-vbguest
 $ vagrant up
 ```
 
+### Migration
+
+```sh
+$ npm install -g knex
+$ knex migrate:latest
+```
+
 ### MariaDB config
 NODE_ENV=development
 - user: floatbehind
