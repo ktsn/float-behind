@@ -11,6 +11,7 @@ NODE_ENV            | Indicates what environment the server is running. `develop
 SERVICE_HOST        | The hostname of the service. `http://localhost.floatbehind.io:3000`
 SLACK_CLIENT_ID     | The client id of Slack app.
 SLACK_CLIENT_SECRET | The client secret of Slack app.
+DB_PASS             | The password for production database
 
 ### Vagrant
 requires: vagrant-hostsupdater, vagrant-vbguest
