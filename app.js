@@ -28,6 +28,7 @@ app.use(cookieParser());
 app.use(session({
   store: new RedisStore(),
   secret: 'keyboard cat',
+  name: 'sid',
   resave: false,
   saveUninitialized: true
 }))
