@@ -101,6 +101,7 @@ app.get("/oauth/slack/callback", slackController.callbackOAuth);
 
 // pages
 app.get("/pages", userController.shouldLogin, pageController.getPages);
+app.delete("/pages/:id", userController.shouldLogin, pageController.deletePage);
 
 // users
 app.get("/users/default_image(.:format)", userController.getDefaultImage);
