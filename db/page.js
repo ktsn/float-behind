@@ -1,18 +1,18 @@
-"use strict";
+'use strict';
 
-const _ = require("lodash");
-const Promise = require("bluebird");
-const db = require("./index");
+const _ = require('lodash');
+const Promise = require('bluebird');
+const db = require('./index');
 
 const Page = db.bookshelf.Model.extend({
-  tableName: "pages",
-  hidden: ["group_id", "user_id"],
+  tableName: 'pages',
+  hidden: ['group_id', 'user_id'],
 
   user: function () {
     return this.belongsTo(db.models.User);
   },
   floatingUsers: function () {
-    return this.belongsToMany(db.models.User, "float_pages");
+    return this.belongsToMany(db.models.User, 'float_pages');
   },
   group: function () {
     return this.belongsTo(db.models.Group);
@@ -20,7 +20,7 @@ const Page = db.bookshelf.Model.extend({
 
   floatFor: function(users) {
     const promises = _(users.toArray())
-      .map((user) => user.related("floatPages").attach(this))
+      .map((user) => user.related('floatPages').attach(this))
       .value();
 
     return Promise.all(promises);
