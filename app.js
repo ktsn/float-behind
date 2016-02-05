@@ -1,16 +1,17 @@
+'use strict';
+
 require('dotenv').load();
 
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 
-var resJsonWithStatusCode = require("./middlewares/resJsonWithStatusCode");
-var suppressStatusCode = require("./middlewares/suppressStatusCode");
+var resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
+var suppressStatusCode = require('./middlewares/suppressStatusCode');
 
 var app = express();
 
@@ -31,7 +32,7 @@ app.use(session({
   name: 'sid',
   resave: false,
   saveUninitialized: true
-}))
+}));
 
 app.use(express.static(path.join(__dirname, 'web/dist')));
 app.use(suppressStatusCode);
@@ -74,37 +75,37 @@ app.use(function(err, req, res, next) {
 });
 
 //test
-app.get("/", function (req, res) {
-  res.send("The server is working");
-})
+app.get('/', function (req, res) {
+  res.send('The server is working');
+});
 
-app.get("/test", function(req, res) {
-  res.json({ messsage: "OK"})
-})
+app.get('/test', function(req, res) {
+  res.json({ messsage: 'OK'});
+});
 
-app.post("/testDatabse", userController.testDatabase);
+app.post('/testDatabse', userController.testDatabase);
 
 //sample data
-app.get("/sampleData", userController.testData);
+app.get('/sampleData', userController.testData);
 
 //from slack
-app.post("/postUrl", slackController.urlFromSlack);
+app.post('/postUrl', slackController.urlFromSlack);
 
 //to users
-app.get("/getList", userController.getList);
-app.get("/getListByTime", userController.getListByTime);
-app.get("/getListById", userController.getListById);
+app.get('/getList', userController.getList);
+app.get('/getListByTime', userController.getListByTime);
+app.get('/getListById', userController.getListById);
 
 // Authentication via Slack
-app.get("/oauth/slack", slackController.requestOAuth);
-app.get("/oauth/slack/callback", slackController.callbackOAuth);
+app.get('/oauth/slack', slackController.requestOAuth);
+app.get('/oauth/slack/callback', slackController.callbackOAuth);
 
 // pages
-app.get("/pages", userController.shouldLogin, pageController.getPages);
-app.delete("/pages/:id", userController.shouldLogin, pageController.deletePage);
+app.get('/pages', userController.shouldLogin, pageController.getPages);
+app.delete('/pages/:id', userController.shouldLogin, pageController.deletePage);
 
 // users
-app.get("/users/default_image(.:format)", userController.getDefaultImage);
+app.get('/users/default_image(.:format)', userController.getDefaultImage);
 
 
 module.exports = app;

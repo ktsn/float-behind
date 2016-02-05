@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-const _ = require("lodash");
+const _ = require('lodash');
 
 module.exports = function(bookshelf) {
   const Model = bookshelf.Model;

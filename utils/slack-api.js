@@ -1,17 +1,17 @@
-"use strict";
+'use strict';
 
-const OAUTH_ENDPOINT = "https://slack.com/oauth/authorize";
-const OAUTH_REDIRECT_URL = process.env.SERVICE_HOST + "/oauth/slack/callback";
+const OAUTH_ENDPOINT = 'https://slack.com/oauth/authorize';
+const OAUTH_REDIRECT_URL = process.env.SERVICE_HOST + '/oauth/slack/callback';
 const OAUTH_CLIENT_ID = process.env.SLACK_CLIENT_ID;
 const OAUTH_CLIENT_SECRET = process.env.SLACK_CLIENT_SECRET;
-const OAUTH_SCOPE = "team:read,users:read,identify";
+const OAUTH_SCOPE = 'team:read,users:read,identify';
 
-const _ = require("lodash");
-const Promise = require("bluebird");
-const axios = require("axios");
+const _ = require('lodash');
+const Promise = require('bluebird');
+const axios = require('axios');
 
 const axiosReq = axios.create({
-  baseURL: "https://slack.com/api/"
+  baseURL: 'https://slack.com/api/'
 });
 
 class SlackApi {
@@ -20,7 +20,7 @@ class SlackApi {
   }
 
   oauthAccess(code) {
-    return this.sendGet("oauth.access", {
+    return this.sendGet('oauth.access', {
       clientId: OAUTH_CLIENT_ID,
       clientSecret: OAUTH_CLIENT_SECRET,
       code: code,
@@ -29,11 +29,11 @@ class SlackApi {
   }
 
   authTest() {
-    return this.sendGet("auth.test");
+    return this.sendGet('auth.test');
   }
 
   usersInfo(userId) {
-    return this.sendGet("users.info", {
+    return this.sendGet('users.info', {
       user: userId
     });
   }
@@ -54,7 +54,7 @@ class SlackApi {
         } else {
           return Promise.reject(data);
         }
-      })
+      });
   }
 
   static get oauthUrl() {
@@ -80,7 +80,7 @@ class SlackApi {
     _(obj)
       .keys()
       .forEach((key) => {
-        if (obj[key] != null && typeof obj[key] === "object") {
+        if (obj[key] != null && typeof obj[key] === 'object') {
           to[transform(key)] = SlackApi.transformKeys(obj[key], transform);
         } else {
           to[transform(key)] = obj[key];
@@ -95,7 +95,7 @@ class SlackApi {
     return _(params)
       .pairs()
       .map((p) => `${p[0]}=${p[1]}`)
-      .join("&");
+      .join('&');
   }
 }
 
