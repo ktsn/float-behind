@@ -34,7 +34,15 @@ app.use(session({
   saveUninitialized: true
 }));
 
-app.use(express.static(path.join(__dirname, 'web/dist')));
+if (process.env.WATCHING) {
+  app.use(express.static(path.join(__dirname, 'web/.tmp')));
+  app.use(express.static(path.join(__dirname, 'web/app')));
+  app.use('/bower_components', express.static(path.join(__dirname, 'web/bower_components')));
+} else {
+  app.use(express.static(path.join(__dirname, 'web/dist')));
+}
+
+
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
 
