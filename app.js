@@ -34,10 +34,9 @@ if (process.env.NODE_ENV === 'production') {
   cookieOptions.secure = true;
 }
 
-// TODO: set secret
 app.use(session({
   store: new RedisStore(),
-  secret: 'keyboard cat',
+  secret: process.env.SESSION_SECRET || 'session secret',
   name: 'sid',
   resave: false,
   saveUninitialized: false,
