@@ -25,13 +25,23 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-// TODO: set secret
+
+const cookieOptions = {
+  maxAge: 365 * 24 * 60 * 60 * 1000 // one year
+};
+
+if (process.env.NODE_ENV === 'production') {
+  cookieOptions.secure = true;
+}
+
 app.use(session({
   store: new RedisStore(),
-  secret: 'keyboard cat',
+  secret: process.env.SESSION_SECRET || 'session secret',
   name: 'sid',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false,
+  rolling: true,
+  cookie: cookieOptions
 }));
 
 if (process.env.WATCHING) {

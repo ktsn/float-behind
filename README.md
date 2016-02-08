@@ -12,6 +12,7 @@ SERVICE_HOST        | The hostname of the service. `http://localhost.floatbehind
 SLACK_CLIENT_ID     | The client id of Slack app.
 SLACK_CLIENT_SECRET | The client secret of Slack app.
 DB_PASS             | The password for production database
+SESSION_SECRET      | The secret value to hash user session.
 
 ### Vagrant
 requires: vagrant-hostsupdater, vagrant-vbguest
