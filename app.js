@@ -56,11 +56,6 @@ if (process.env.WATCHING) {
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
 
-//controllers
-var slackController = require('./controller/slack');
-var userController = require('./controller/user');
-var pageController = require('./controller/page');
-
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
 //   var err = new Error('Not Found');
@@ -92,38 +87,14 @@ app.use(function(err, req, res, next) {
   });
 });
 
-//test
-app.get('/', function (req, res) {
-  res.send('The server is working');
-});
-
-app.get('/test', function(req, res) {
-  res.json({ messsage: 'OK'});
-});
-
-app.post('/testDatabse', userController.testDatabase);
-
-//sample data
-app.get('/sampleData', userController.testData);
-
-//from slack
-app.post('/postUrl', slackController.urlFromSlack);
-
-//to users
-app.get('/getList', userController.getList);
-app.get('/getListByTime', userController.getListByTime);
-app.get('/getListById', userController.getListById);
-
-// Authentication via Slack
-app.get('/oauth/slack', slackController.requestOAuth);
-app.get('/oauth/slack/callback', slackController.callbackOAuth);
+// OAuth
+app.use('/oauth', require('./routers/oauth'));
 
 // pages
-app.get('/pages', userController.shouldLogin, pageController.getPages);
-app.delete('/pages/:id', userController.shouldLogin, pageController.deletePage);
+app.use('/pages', require('./routers/pages'));
 
 // users
-app.get('/users/default_image(.:format)', userController.getDefaultImage);
+app.use('/users', require('./routers/users'));
 
 
 module.exports = app;
