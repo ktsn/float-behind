@@ -2,18 +2,19 @@
 
 require('dotenv').load();
 
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var RedisStore = require('connect-redis')(session);
+const express = require('express');
+const validator = require('express-validator');
+const path = require('path');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
 
-var resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
-var suppressStatusCode = require('./middlewares/suppressStatusCode');
+const resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
+const suppressStatusCode = require('./middlewares/suppressStatusCode');
 
-var app = express();
+const app = express();
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +25,7 @@ var app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(validator());
 app.use(cookieParser());
 
 const cookieOptions = {
@@ -58,7 +60,7 @@ app.use(resJsonWithStatusCode);
 
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
-//   var err = new Error('Not Found');
+//   const err = new Error('Not Found');
 //   err.status = 404;
 //   next(err);
 // });
