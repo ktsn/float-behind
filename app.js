@@ -3,7 +3,7 @@
 require('dotenv').load();
 
 const express = require('express');
-const validator = require('express-validator');
+const expressValidator = require('express-validator');
 const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
@@ -25,7 +25,13 @@ const app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(validator());
+
+app.use(expressValidator({
+  errorFormatter: function (param, message, value) {
+    return { param, message, value };
+  }
+}));
+
 app.use(cookieParser());
 
 const cookieOptions = {
