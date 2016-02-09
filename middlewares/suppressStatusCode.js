@@ -4,8 +4,8 @@
 // 'suppress_response_codes" is set, à la Twitter
 
 module.exports = function (req, res, next) {
-  var suppress = req.body && req.body.suppress_response_codes ||
-                 req.query && req.query.suppress_response_codes;
+  const suppress = req.body && req.body.suppress_response_codes ||
+                   req.query && req.query.suppress_response_codes;
 
   if (typeof suppress === 'string') {
     suppress = suppress === 'true' || suppress === '1';

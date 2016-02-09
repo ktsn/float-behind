@@ -2,18 +2,19 @@
 
 require('dotenv').load();
 
-var express = require('express');
-var path = require('path');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var session = require('express-session');
-var RedisStore = require('connect-redis')(session);
+const express = require('express');
+const validator = require('express-validator');
+const path = require('path');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
 
-var resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
-var suppressStatusCode = require('./middlewares/suppressStatusCode');
+const resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
+const suppressStatusCode = require('./middlewares/suppressStatusCode');
 
-var app = express();
+const app = express();
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +25,7 @@ var app = express();
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(validator());
 app.use(cookieParser());
 
 const cookieOptions = {
@@ -56,14 +58,9 @@ if (process.env.WATCHING) {
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
 
-//controllers
-var slackController = require('./controller/slack');
-var userController = require('./controller/user');
-var pageController = require('./controller/page');
-
 // catch 404 and forward to error handler
 // app.use(function(req, res, next) {
-//   var err = new Error('Not Found');
+//   const err = new Error('Not Found');
 //   err.status = 404;
 //   next(err);
 // });
@@ -92,38 +89,14 @@ app.use(function(err, req, res, next) {
   });
 });
 
-//test
-app.get('/', function (req, res) {
-  res.send('The server is working');
-});
-
-app.get('/test', function(req, res) {
-  res.json({ messsage: 'OK'});
-});
-
-app.post('/testDatabse', userController.testDatabase);
-
-//sample data
-app.get('/sampleData', userController.testData);
-
-//from slack
-app.post('/postUrl', slackController.urlFromSlack);
-
-//to users
-app.get('/getList', userController.getList);
-app.get('/getListByTime', userController.getListByTime);
-app.get('/getListById', userController.getListById);
-
-// Authentication via Slack
-app.get('/oauth/slack', slackController.requestOAuth);
-app.get('/oauth/slack/callback', slackController.callbackOAuth);
+// OAuth
+app.use('/oauth', require('./routers/oauth'));
 
 // pages
-app.get('/pages', userController.shouldLogin, pageController.getPages);
-app.delete('/pages/:id', userController.shouldLogin, pageController.deletePage);
+app.use('/pages', require('./routers/pages'));
 
 // users
-app.get('/users/default_image(.:format)', userController.getDefaultImage);
+app.use('/users', require('./routers/users'));
 
 
 module.exports = app;

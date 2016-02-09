@@ -1,10 +1,28 @@
 'use strict';
 
+const express = require('express');
 const User = require('../db/user');
+const shouldUserLogin = require('../middlewares/shouldUserLogin');
+const slackAdapter = require('../adapters/slack');
 
-const ctrl = {};
+const router = express.Router();
 
-ctrl.getPages = function (req, res) {
+router.post('/slack', function (req, res) {
+  slackAdapter.createPageByCommand(req.body)
+    .then((page) => {
+      if (!page) return res.status(400).json({message: 'URLを貼れ！'});
+
+      res.status(200).json(page);
+    })
+    .catch((err) => {
+      console.error(err);
+      return res.status(500).json({error: err});
+    });
+});
+
+router.use(shouldUserLogin);
+
+router.get('/', function (req, res) {
   const sinceId = Number(req.query.sinceId);
   const userId = req.session.userId;
 
@@ -19,9 +37,9 @@ ctrl.getPages = function (req, res) {
       const floatPages = user.related('floatPages');
       res.json({ result: floatPages });
     });
-};
+});
 
-ctrl.deletePage = function (req, res) {
+router.delete('/:id', function (req, res) {
   const pageId = req.params.id;
   const userId = req.session.userId;
 
@@ -34,6 +52,6 @@ ctrl.deletePage = function (req, res) {
     .then(() => {
       res.json({ result: {} });
     });
-};
+});
 
-module.exports = ctrl;
+module.exports = router;
