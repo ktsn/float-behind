@@ -50,7 +50,7 @@ router.get('/', [
 router.delete('/:id', [
   validator({
     params: {
-      id: { isint: { errorMessage: 'id should be integer' }}
+      id: { isInt: { errorMessage: 'id should be integer' }}
     }
   }),
   function (req, res) {
