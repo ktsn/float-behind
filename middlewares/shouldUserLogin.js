@@ -1,6 +1,6 @@
 'use strict';
 
-const createErrorResponse = require('../utils/error').createErrorResponse;
+const {createErrorResponse} = require('../utils/error');
 
 module.exports = function (req, res, next) {
   if (!req.session.userId) {

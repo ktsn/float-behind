@@ -10,7 +10,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
-const createErrorResponse = require('./utils/error').createErrorResponse;
+const {createErrorResponse} = require('./utils/error');
 
 const resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
 const suppressStatusCode = require('./middlewares/suppressStatusCode');

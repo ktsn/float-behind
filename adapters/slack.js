@@ -32,10 +32,7 @@ exports.saveSlackUser = function(token) {
         api.usersInfo(data.userId)
       ]);
     })
-    .then((values) => {
-      const user = values[0];
-      const slackUser = values[1].user;
-
+    .then(([user, {user: slackUser}]) => {
       return user.set({
         name: slackUser.name,
         email: slackUser.profile.email,
@@ -88,11 +85,7 @@ exports.createPageByCommand = function (commandParam) {
 
   // save and return the new page
   return Promise.all([titlePromise, userPromise, groupPromise])
-    .then((values) => {
-      const title = values[0];
-      const user = values[1];
-      const group = values[2];
-
+    .then(([title, user, group]) => {
       const page = new Page({
         userId: user.get('id'),
         groupId: group.get('id'),

@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const createErrorResponse = require('../utils/error').createErrorResponse;
+const {createErrorResponse} = require('../utils/error');
 
 /**
  * Receive validation config and returns middleware for validation
