@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
+const {createErrorResponse} = require('./utils/error');
 
 const resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
 const suppressStatusCode = require('./middlewares/suppressStatusCode');
@@ -64,31 +65,23 @@ if (process.env.WATCHING) {
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
 
-// OAuth
 app.use('/oauth', require('./routers/oauth'));
-
-// pages
-app.use('/pages', require('./routers/pages'));
-
-// users
 app.use('/users', require('./routers/users'));
 
+// APIs
+const apiRouter = express.Router();
+apiRouter.use('/pages', require('./api/pages'));
+
 // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   const err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
-
-// error handlers
-
-app.use(function(err, req, res, next) {
-  console.log(err);
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: err
-  });
+apiRouter.use(function(req, res, next) {
+  next(createErrorResponse('Sorry, the endpoint does not exist', 404));
 });
+
+// Error handlers
+apiRouter.use(function(err, req, res, next) {
+  res.status(err.status || 500).send(err);
+});
+
+app.use('/api/v1', apiRouter);
 
 module.exports = app;
