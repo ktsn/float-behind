@@ -5,7 +5,7 @@ terminate() {
   kill %2
 }
 
-WATCHING=1 nodemon -L bin/www &
+WATCHING=1 nodemon --ignore web/ -L bin/www &
 cd web && npm run watch &
 
 trap terminate SIGINT
