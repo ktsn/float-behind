@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
+const createErrorResponse = require('./utils/error').createErrorResponse;
 
 const resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
 const suppressStatusCode = require('./middlewares/suppressStatusCode');
@@ -74,21 +75,13 @@ app.use('/pages', require('./routers/pages'));
 app.use('/users', require('./routers/users'));
 
 // catch 404 and forward to error handler
-// app.use(function(req, res, next) {
-//   const err = new Error('Not Found');
-//   err.status = 404;
-//   next(err);
-// });
+app.use(function(req, res, next) {
+  next(createErrorResponse('Sorry, the endpoint does not exist', 404));
+});
 
-// error handlers
-
+// Error handlers
 app.use(function(err, req, res, next) {
-  console.log(err);
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: err
-  });
+  res.status(err.status || 500).send(err);
 });
 
 module.exports = app;

@@ -7,10 +7,10 @@ module.exports = function (req, res, next) {
   res._json = res.json;
   res.json = function (obj) {
     if (obj) {
-      obj.code = res.statusCode;
+      obj.status = res.statusCode;
     } else {
       obj = {
-        code: res.statusCode
+        status: res.statusCode
       };
     }
     res._json(obj);
