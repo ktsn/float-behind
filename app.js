@@ -65,23 +65,23 @@ if (process.env.WATCHING) {
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
 
-// OAuth
 app.use('/oauth', require('./routers/oauth'));
-
-// pages
-app.use('/pages', require('./routers/pages'));
-
-// users
 app.use('/users', require('./routers/users'));
 
+// APIs
+const apiRouter = express.Router();
+apiRouter.use('/pages', require('./api/pages'));
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+apiRouter.use(function(req, res, next) {
   next(createErrorResponse('Sorry, the endpoint does not exist', 404));
 });
 
 // Error handlers
-app.use(function(err, req, res, next) {
+apiRouter.use(function(err, req, res, next) {
   res.status(err.status || 500).send(err);
 });
+
+app.use('/api/v1', apiRouter);
 
 module.exports = app;
