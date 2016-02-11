@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+const util = require('util')
 
 /**
  * Receive validation config and returns middleware for validation
@@ -16,6 +17,13 @@ module.exports = function(validation) {
     _.forEach(validation, (val, key) => {
       req[`check${_.capitalize(key)}`](validation[key]);
     });
-    next(req.validationErrors());
+
+    var errors = req.validationErrors();
+    if (errors) {
+      res.send(util.inspect(errors), 400);
+      return;
+    } else {
+      next();
+    }
   };
 };
