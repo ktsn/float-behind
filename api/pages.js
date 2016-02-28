@@ -11,9 +11,17 @@ const router = express.Router();
 router.post('/slack', function (req, res) {
   slackAdapter.createPageByCommand(req.body)
     .then((page) => {
-      if (!page) return res.status(400).json({message: 'URLを貼れ！'});
+      if (!page) {
+        return res.status(400).json({
+          response_type: 'ephemeral',
+          text: 'The text must include a URL'
+        });
+      }
 
-      res.status(200).json(page);
+      res.status(200).json({
+        response_type: 'in_channel',
+        text: page.title
+      });
     })
     .catch((err) => {
       console.error(err);
