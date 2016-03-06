@@ -1,8 +1,6 @@
 'use strict';
 
-const getUrls = require('get-urls');
 const axios = require('axios');
-const _ = require('lodash');
 const Promise = require('bluebird');
 const moment = require('moment');
 const textUtil = require('../utils/text');
@@ -42,10 +40,8 @@ exports.saveSlackUser = function(token) {
     .catch((err) => console.error(err));
 };
 
-exports.createPageByCommand = function (commandParam) {
-
-  const param = SlackApi.snakeToCamel(commandParam);
-  const pageUrl = _.first(getUrls(param.text));
+exports.createPageByCommand = function (param) {
+  const pageUrl = param.text;
 
   // There is no url in text
   if (!pageUrl) {

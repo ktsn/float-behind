@@ -1,33 +1,45 @@
 'use strict';
 
 const express = require('express');
+const getUrls = require('get-urls');
 const User = require('../db/user');
 const shouldUserLogin = require('../middlewares/shouldUserLogin');
+const slashCommandResponse = require('../middlewares/slashCommandResponse');
 const slackAdapter = require('../adapters/slack');
-const validator = require('../validator');
+const {snakeToCamel} = require('../utils/transform');
+const {validator} = require('../validator');
 
 const router = express.Router();
 
-router.post('/slack', function (req, res) {
-  slackAdapter.createPageByCommand(req.body)
-    .then((page) => {
-      if (!page) {
-        return res.status(400).json({
-          response_type: 'ephemeral',
-          text: 'The text must include a URL'
+router.post('/slack', [
+  function (req, res, next) {
+    req.body = snakeToCamel(req.body);
+    req.body.text = getUrls(req.body.text)[0];
+    next();
+  },
+  validator({
+    body: {
+      userId:   { notEmpty: true },
+      userName: { notEmpty: true },
+      teamId:   { notEmpty: true },
+      text:     { isPageURL: { errorMessage: 'The text must include a URL' }}
+    }
+  }),
+  function (req, res) {
+    slackAdapter.createPageByCommand(req.body)
+      .then((page) => {
+        res.status(200).json({
+          response_type: 'in_channel',
+          text: page.get('title')
         });
-      }
-
-      res.status(200).json({
-        response_type: 'in_channel',
-        text: page.title
+      })
+      .catch((err) => {
+        console.error(err);
+        return res.status(500).json({error: err});
       });
-    })
-    .catch((err) => {
-      console.error(err);
-      return res.status(500).json({error: err});
-    });
-});
+  },
+  slashCommandResponse
+]);
 
 router.use(shouldUserLogin);
 
