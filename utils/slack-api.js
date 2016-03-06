@@ -9,6 +9,7 @@ const OAUTH_SCOPE = 'team:read,users:read,identify';
 const _ = require('lodash');
 const Promise = require('bluebird');
 const axios = require('axios');
+const {snakeToCamel, camelToSnake, paramsToString} = require('./transform');
 
 const axiosReq = axios.create({
   baseURL: 'https://slack.com/api/'
@@ -45,10 +46,10 @@ class SlackApi {
 
     return axiosReq
       .get(method, {
-        params: SlackApi.camelToSnake(params)
+        params: camelToSnake(params)
       })
       .then((response) => {
-        const data = SlackApi.snakeToCamel(response.data);
+        const data = snakeToCamel(response.data);
         if (data.ok) {
           return data;
         } else {
@@ -58,44 +59,12 @@ class SlackApi {
   }
 
   static get oauthUrl() {
-    const paramsStr = SlackApi.paramsToString(SlackApi.camelToSnake({
+    const paramsStr = paramsToString(camelToSnake({
       clientId: OAUTH_CLIENT_ID,
       scope: OAUTH_SCOPE,
       redirectUri: OAUTH_REDIRECT_URL
     }));
     return `${OAUTH_ENDPOINT}?${paramsStr}`;
-  }
-
-  static camelToSnake(obj) {
-    return SlackApi.transformKeys(obj, _.snakeCase);
-  }
-
-  static snakeToCamel(obj) {
-    return SlackApi.transformKeys(obj, _.camelCase);
-  }
-
-  static transformKeys(obj, transform) {
-    const to = {};
-
-    _(obj)
-      .keys()
-      .forEach((key) => {
-        if (obj[key] != null && typeof obj[key] === 'object') {
-          to[transform(key)] = SlackApi.transformKeys(obj[key], transform);
-        } else {
-          to[transform(key)] = obj[key];
-        }
-      })
-      .commit();
-
-    return to;
-  }
-
-  static paramsToString(params) {
-    return _(params)
-      .pairs()
-      .map((p) => `${p[0]}=${p[1]}`)
-      .join('&');
   }
 }
 

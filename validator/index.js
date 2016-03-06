@@ -12,7 +12,7 @@ const {createErrorResponse} = require('../utils/error');
  *   headers: {...}
  * }
  */
-module.exports = function(validation) {
+exports.validator = function(validation) {
   return function (req, res, next) {
     _.forEach(validation, (val, key) => {
       req[`check${_.capitalize(key)}`](validation[key]);
@@ -34,3 +34,13 @@ function adjustError(errors) {
     details: errors
   };
 }
+
+exports.errorFormatter = function(param, message, value) {
+  return { param, message, value };
+};
+
+exports.customValidators = {
+  isPageURL: function(value) {
+    return /^https?:\/\//i.test(value);
+  }
+};

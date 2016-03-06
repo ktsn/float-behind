@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const RedisStore = require('connect-redis')(session);
 const {createErrorResponse} = require('./utils/error');
+const {errorFormatter, customValidators} = require('./validator');
 
 const resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
 const suppressStatusCode = require('./middlewares/suppressStatusCode');
@@ -27,11 +28,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(expressValidator({
-  errorFormatter: function (param, message, value) {
-    return { param, message, value };
-  }
-}));
+app.use(expressValidator({ errorFormatter, customValidators }));
 
 app.use(cookieParser());
 
