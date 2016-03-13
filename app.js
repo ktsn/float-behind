@@ -47,7 +47,8 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   rolling: true,
-  cookie: cookieOptions
+  cookie: cookieOptions,
+  proxy: true
 }));
 
 if (process.env.WATCHING) {
