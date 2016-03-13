@@ -41,7 +41,7 @@ module.exports = {
     connection: {
       database: 'floatbehind_db',
       user:     'floatbehind',
-      password: process.env.DB_PASSWORD
+      password: process.env.DB_PASS
     },
     pool: {
       min: 2,
