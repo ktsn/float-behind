@@ -69,6 +69,7 @@ app.use('/users', require('./routers/users'));
 // APIs
 const apiRouter = express.Router();
 apiRouter.use('/pages', require('./api/pages'));
+apiRouter.use('/users', require('./api/users'));
 
 // catch 404 and forward to error handler
 apiRouter.use(function(req, res, next) {
