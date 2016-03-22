@@ -14,7 +14,7 @@ const router = express.Router();
 router.post('/slack', [
   function (req, res, next) {
     req.body = snakeToCamel(req.body);
-    req.body.text = getUrls(req.body.text)[0];
+    req.body.text = getUrls(req.body.text, { stripWWW: false })[0];
     next();
   },
   validator({
