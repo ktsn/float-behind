@@ -9,7 +9,7 @@ const slashCommandResponse = require('../../../middlewares/slashCommandResponse'
 module.exports = [
   function (req, res, next) {
     req.body = snakeToCamel(req.body);
-    req.body.text = getUrls(req.body.text, { stripWWW: false })[0];
+    req.body.text = getUrls(req.body.text, { stripWWW: false, stripFragment: false })[0];
     next();
   },
   validator({
