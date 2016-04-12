@@ -1,4 +1,6 @@
 # floatbehind
+[![Build Status](https://travis-ci.org/ktsn/float-behind.svg?branch=master)](https://travis-ci.org/ktsn/float-behind)
+
 This is the node server for the floatbehind app!
 
 ## Development
