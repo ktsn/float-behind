@@ -15,6 +15,7 @@ const {errorFormatter, customValidators} = require('./validator');
 
 const resJsonWithStatusCode = require('./middlewares/resJsonWithStatusCode');
 const suppressStatusCode = require('./middlewares/suppressStatusCode');
+const allowCors = require('./middlewares/allowCors');
 
 const app = express();
 
@@ -59,6 +60,9 @@ if (process.env.WATCHING) {
   app.use(express.static(path.join(__dirname, '../web/dist')));
 }
 
+if (process.env.NODE_ENV !== 'production') {
+  app.use(allowCors);
+}
 
 app.use(suppressStatusCode);
 app.use(resJsonWithStatusCode);
