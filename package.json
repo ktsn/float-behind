@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "./start.sh",
-    "lint": "eslint . bin/* && cd web && npm run lint"
+    "lint": "eslint . bin/*"
   },
   "dependencies": {
     "app-root-path": "^1.0.0",
