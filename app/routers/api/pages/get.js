@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const User = require('../../../db/user');
-const {validator} = require('../../../validator');
+const User = require('../../../db/user')
+const { validator } = require('../../../validator')
 
 module.exports = [
   validator({
@@ -10,8 +10,8 @@ module.exports = [
     }
   }),
   function (req, res) {
-    const sinceId = Number(req.query.sinceId) || 0;
-    const userId = req.session.userId;
+    const sinceId = Number(req.query.sinceId) || 0
+    const userId = req.session.userId
 
     User.where('id', userId)
       .fetch({
@@ -21,8 +21,8 @@ module.exports = [
         }
       })
       .then((user) => {
-        const floatPages = user.related('floatPages');
-        res.json({ result: floatPages });
-      });
+        const floatPages = user.related('floatPages')
+        res.json({ result: floatPages })
+      })
   }
-];
+]

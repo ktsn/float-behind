@@ -1,15 +1,15 @@
-'use strict';
+'use strict'
 
-const express = require('express');
-const shouldUserLogin = require('../../../middlewares/shouldUserLogin');
+const express = require('express')
+const shouldUserLogin = require('../../../middlewares/shouldUserLogin')
 
-const router = express.Router();
+const router = express.Router()
 
-router.post('/slack', require('./slack'));
+router.post('/slack', require('./slack'))
 
-router.use(shouldUserLogin);
+router.use(shouldUserLogin)
 
-router.get('/', require('./get'));
-router.delete('/:id', require('./delete'));
+router.get('/', require('./get'))
+router.delete('/:id', require('./delete'))
 
-module.exports = router;
+module.exports = router

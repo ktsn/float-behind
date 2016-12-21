@@ -1,37 +1,37 @@
-'use strict';
+'use strict'
 
-const _ = require('lodash');
+const _ = require('lodash')
 
 function camelToSnake(obj) {
-  return transformKeys(obj, _.snakeCase);
+  return transformKeys(obj, _.snakeCase)
 }
 
 function snakeToCamel(obj) {
-  return transformKeys(obj, _.camelCase);
+  return transformKeys(obj, _.camelCase)
 }
 
 function transformKeys(obj, transform) {
-  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj === null || typeof obj !== 'object') return obj
 
-  const to = _.isArray(obj) ? [] : {};
+  const to = _.isArray(obj) ? [] : {}
 
   _(obj)
     .keys()
     .forEach((key) => {
-      to[transform(key)] = transformKeys(obj[key], transform);
+      to[transform(key)] = transformKeys(obj[key], transform)
     })
-    .commit();
+    .commit()
 
-  return to;
+  return to
 }
 
 function paramsToString(params) {
   return _(params)
     .pairs()
     .map((p) => `${p[0]}=${p[1]}`)
-    .join('&');
+    .join('&')
 }
 
-exports.camelToSnake = camelToSnake;
-exports.snakeToCamel = snakeToCamel;
-exports.paramsToString = paramsToString;
+exports.camelToSnake = camelToSnake
+exports.snakeToCamel = snakeToCamel
+exports.paramsToString = paramsToString

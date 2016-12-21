@@ -1,12 +1,12 @@
-'use strict';
+'use strict'
 
-const express = require('express');
-const shouldUserLogin = require('../../../middlewares/shouldUserLogin');
+const express = require('express')
+const shouldUserLogin = require('../../../middlewares/shouldUserLogin')
 
-const router = express.Router();
+const router = express.Router()
 
-router.use(shouldUserLogin);
+router.use(shouldUserLogin)
 
-router.get('/me', require('./me'));
+router.get('/me', require('./me'))
 
-module.exports = router;
+module.exports = router
