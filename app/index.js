@@ -4,7 +4,6 @@ require('dotenv').load()
 
 const express = require('express')
 const expressValidator = require('express-validator')
-const path = require('path')
 const logger = require('morgan')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
@@ -51,14 +50,6 @@ app.use(session({
   cookie: cookieOptions,
   proxy: true
 }))
-
-if (process.env.WATCHING) {
-  app.use(express.static(path.join(__dirname, '../web/.tmp')))
-  app.use(express.static(path.join(__dirname, '../web/app')))
-  app.use('/bower_components', express.static(path.join(__dirname, '../web/bower_components')))
-} else {
-  app.use(express.static(path.join(__dirname, '../web/dist')))
-}
 
 if (process.env.NODE_ENV !== 'production') {
   app.use(allowCors)
