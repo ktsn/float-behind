@@ -41,7 +41,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(session({
-  store: new RedisStore(),
+  store: new RedisStore({
+    host: process.env.REDIS_HOST || '127.0.0.1'
+  }),
   secret: process.env.SESSION_SECRET || 'session secret',
   name: 'sid',
   resave: false,

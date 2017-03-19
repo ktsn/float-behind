@@ -1,0 +1,9 @@
+.git
+node_modules
+.idea
+web/*
+!web/dist/
+
+.dockerignore
+docker-compose.yml
+Dockerfile

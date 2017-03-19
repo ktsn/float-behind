@@ -39,6 +39,7 @@ module.exports = {
   production: {
     client: 'mysql',
     connection: {
+      host: process.env.DB_HOST,
       database: 'floatbehind_db',
       user:     'floatbehind',
       password: process.env.DB_PASS

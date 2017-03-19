@@ -14,6 +14,8 @@ SERVICE_HOST        | The hostname of the service. `http://localhost.floatbehind
 SLACK_CLIENT_ID     | The client id of Slack app.
 SLACK_CLIENT_SECRET | The client secret of Slack app.
 DB_PASS             | The password for production database
+DB_HOST             | The hostname for production database
+REDIS_HOST          | The hostname for production redis
 SESSION_SECRET      | The secret value to hash user session.
 
 ### Vagrant
